@@ -148,7 +148,7 @@
   (str (cond (:finished? ep) "✓ " (:skipped? ep) "⨯ " (pos? (or (:position ep) 0)) "◐ " :else "")
        (when (starred (:url ep)) "★ ")))
 
-(defn- fmt-duration [s]
+(defn fmt-duration [s]
   (when s (let [m (quot s 60)] (if (>= m 60) (format "%dh%02dm" (quot m 60) (rem m 60)) (str m "m")))))
 
 (defn- episode-menu [ep starred]

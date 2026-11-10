@@ -172,6 +172,16 @@
       "hash": "sha256-2OgLA0KFMl6QX1RkmhWYtoe5pKmaOk9LlO7TWXyyEEg="
     },
     {
+      "mvn-path": "hiccup/hiccup/2.0.0/hiccup-2.0.0.jar",
+      "mvn-repo": "https://repo.clojars.org/",
+      "hash": "sha256-VoBRu8I82VXoSvOc6OYUQEwWZULGlC0db2S6Vb1yBTo="
+    },
+    {
+      "mvn-path": "hiccup/hiccup/2.0.0/hiccup-2.0.0.pom",
+      "mvn-repo": "https://repo.clojars.org/",
+      "hash": "sha256-f+cp+WpSEwEH+QoLsfeQXAK0ncn+JnIwxMz4IEJ/T5c="
+    },
+    {
       "mvn-path": "http-kit/http-kit/2.8.0/http-kit-2.8.0.jar",
       "mvn-repo": "https://repo.clojars.org/",
       "hash": "sha256-xJbmqG/sRrN0PcOZ7chy4USW2IioTQTByE3qoe0gg60="

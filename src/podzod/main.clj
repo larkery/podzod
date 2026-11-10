@@ -10,7 +10,8 @@
             [podzod.gpodder :as gpodder]
             [podzod.http :as http]
             [podzod.plugin-repo :as plugin-repo]
-            [podzod.state :as state])
+            [podzod.state :as state]
+            [podzod.ui :as ui])
   (:import (java.util.concurrent Executors TimeUnit)))
 
 (defn- star-downloads!
@@ -49,7 +50,8 @@
   (let [app (make-app cfg)
         stop (server/run-server (http/handler app
                                               (control/control-routes app)
-                                              (plugin-repo/repo-routes app))
+                                              (plugin-repo/repo-routes app)
+                                              (ui/ui-routes app))
                                 {:port (:port cfg) :ip (:bind cfg "0.0.0.0")
                                  :legacy-return-value? false})]
     (log/info "podzod listening on" (:port cfg))

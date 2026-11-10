@@ -44,6 +44,17 @@ Go to Settings → Synchronization → choose a provider → **gpodder.net**, th
 
 Subscriptions are treated as yours rather than per-device, so every device ends up with the same list.
 
+## Web UI
+
+Open `http://host:8086/` and log in with the same username and password. It has four pages:
+
+- **Home:** play something, skip, star what's playing, add a one-off link, and your starred episodes
+- **Subscriptions:** each feed's episodes, with play, star, mark listened and skip
+- **Activity:** recent episode actions and subscription changes by device, which is handy for checking that AntennaPod is syncing
+- **Picker:** a readable version of `/feeds`
+
+Pages are rendered on the server, and every action is a plain form. htmx (vendored in `resources/public`) makes navigation smoother and updates single episode rows in place.
+
 ## LMS plugin
 
 1. Go to LMS Settings → Manage Plugins. Under **Additional Repositories**, add `http://host:8086/lms/repo.xml`.
