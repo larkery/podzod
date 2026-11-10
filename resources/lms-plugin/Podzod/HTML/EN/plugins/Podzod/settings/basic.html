@@ -1,0 +1,15 @@
+[% PROCESS settings/header.html %]
+
+	[% WRAPPER setting title="PLUGIN_PODZOD_SERVER" desc="PLUGIN_PODZOD_SERVER_DESC" %]
+		<input type="text" class="stdedit" name="pref_server" id="server" value="[% prefs.pref_server | html %]" size="40">
+	[% END %]
+
+	[% WRAPPER setting title="PLUGIN_PODZOD_USER" desc="" %]
+		<input type="text" class="stdedit" name="pref_user" id="user" value="[% prefs.pref_user | html %]" size="20">
+	[% END %]
+
+	[% WRAPPER setting title="PLUGIN_PODZOD_PASSWORD" desc="" %]
+		<input type="password" class="stdedit" name="pref_password" id="password" value="[% prefs.pref_password | html %]" size="20">
+	[% END %]
+
+[% PROCESS settings/footer.html %]

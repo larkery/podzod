@@ -1,0 +1,17 @@
+PLUGIN_PODZOD
+	EN	Podzod
+
+PLUGIN_PODZOD_DESC
+	EN	Podcasts synced with AntennaPod via podzod, plus "play something sensible next".
+
+PLUGIN_PODZOD_SERVER
+	EN	podzod server
+
+PLUGIN_PODZOD_SERVER_DESC
+	EN	Base URL of the podzod service, e.g. http://homeserver:8086
+
+PLUGIN_PODZOD_USER
+	EN	Username
+
+PLUGIN_PODZOD_PASSWORD
+	EN	Password

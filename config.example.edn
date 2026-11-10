@@ -1,0 +1,26 @@
+;; podzod config. Copy to /etc/podzod/config.edn (or pass the path as the
+;; first argument / PODZOD_CONFIG).
+{:port 8086
+ :db "/var/lib/podzod/podzod.db"
+ :user "tom"
+ :password-file "/run/secrets/podzod"   ; one line, the password
+
+ :lms {:url "http://localhost:9000"
+       ;; :default-player "aa:bb:cc:dd:ee:ff"  ; else the first player LMS lists
+       ;; :user "lms-user" :password "..."     ; only if LMS has password protection on
+       }
+
+ :defaults {:news-max-age-days 7      ; news feeds: ignore episodes older than this
+            :refresh-minutes 120      ; how often to re-fetch feeds
+            :repick-hours 12          ; don't offer an episode again this soon after picking it
+            :download-means-star false} ; AntennaPod "download" actions star the episode
+
+ :bbc {:enabled true :cache-minutes 10 :pages 2}
+
+ ;; Hand overrides, keyed by feed URL or bbc:<programme id> (see GET /feeds).
+ ;;   :serial true/false   :news true/false   :max-age-days n
+ ;;   :weight 0.5 (less often) / 2 (more often)   :exclude true   :title "..."
+ :feeds {;; "https://feeds.example.com/story.xml" {:serial true}
+         ;; "https://feeds.example.com/daily.xml" {:news true :max-age-days 2 :weight 0.5}
+         ;; "bbc:b006qykl" {:weight 2}
+         }}

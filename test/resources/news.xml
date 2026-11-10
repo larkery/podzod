@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+<channel>
+  <title>Daily News</title>
+  <itunes:category text="News"><itunes:category text="Daily News"/></itunes:category>
+  <item><title>Mon</title><guid>n1</guid><pubDate>Mon, 9 Nov 2026 06:00:00 +0000</pubDate>
+    <itunes:duration>20:00</itunes:duration><enclosure url="https://ex/n/1.mp3"/></item>
+  <item><title>Tue</title><guid>n2</guid><pubDate>Tue, 10 Nov 2026 06:00:00 +0000</pubDate>
+    <itunes:duration>20:00</itunes:duration><enclosure url="https://ex/n/2.mp3"/></item>
+</channel>
+</rss>

@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<extensions>
+	<name>PLUGIN_PODZOD</name>
+	<module>Plugins::Podzod::Plugin</module>
+	<version>1.0.0</version>
+	<description>PLUGIN_PODZOD_DESC</description>
+	<creator>podzod</creator>
+	<optionsURL>plugins/Podzod/settings/basic.html</optionsURL>
+	<category>musicservices</category>
+	<type>2</type>
+	<targetApplication>
+		<id>SqueezeCenter</id>
+		<minVersion>8.0</minVersion>
+		<maxVersion>*</maxVersion>
+	</targetApplication>
+</extensions>

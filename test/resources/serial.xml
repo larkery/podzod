@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+<channel>
+  <title>Serial Story</title>
+  <itunes:type>serial</itunes:type>
+  <itunes:category text="Fiction"/>
+  <item>
+    <title>Trailer</title><itunes:episodeType>trailer</itunes:episodeType>
+    <enclosure url="https://ex/s/trailer.mp3" type="audio/mpeg"/>
+  </item>
+  <item>
+    <title>Chapter 2</title><itunes:title>Chapter Two</itunes:title>
+    <guid>s2</guid><pubDate>Tue, 03 Nov 2026 08:00:00 +0000</pubDate>
+    <itunes:duration>00:40:00</itunes:duration><itunes:season>1</itunes:season><itunes:episode>2</itunes:episode>
+    <enclosure url="https://ex/s/2.mp3" type="audio/mpeg"/>
+  </item>
+  <item>
+    <title>Chapter 1</title>
+    <guid>s1</guid><pubDate>Tue, 27 Oct 2026 08:00:00 GMT</pubDate>
+    <itunes:duration>1500</itunes:duration><itunes:season>1</itunes:season><itunes:episode>1</itunes:episode>
+    <enclosure url="https://ex/s/1.mp3" type="audio/mpeg"/>
+  </item>
+  <item><title>Blog post</title><guid>noaudio</guid></item>
+</channel>
+</rss>
