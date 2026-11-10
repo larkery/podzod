@@ -88,15 +88,34 @@
                    (from-feed-text url body selector)
                    :else (from-page url))))))
 
+(defn- join-title [feed-title title]
+  (some->> [feed-title title] (remove nil?) seq (str/join ": ")))
+
+(defn- known-episode
+  "An episode of a subscribed feed with this URL, if we have one."
+  [ds url]
+  (let [info (state/episode-info ds url)]
+    (when (and info (not (:oneoff? info))) info)))
+
+(defn- star-known! [ds {:keys [url feed-url feed-title title duration-s]} link]
+  (state/star! ds url feed-url (str "shared " link))
+  {:url url :title (or (join-title feed-title title) url) :duration-s duration-s
+   :feed feed-url :subscribed true})
+
 (defn add!
-  "Resolves and stores a one-off, starring it so it's played first."
+  "Stars a shared episode so it's played first. Episodes of subscribed feeds
+  are just starred; anything else is stored as a one-off in the inbox."
   [ds link selector]
-  (let [{:keys [url title feed-url feed-title duration-s]} (resolve-link link selector)
-        title (or (some->> [feed-title title] (remove nil?) seq (str/join ": ")) url)]
-    (db/exec! ds ["INSERT INTO oneoffs (episode_url, title, feed_url, duration_s, source_link, added_ts)
-                   VALUES (?, ?, ?, ?, ?, ?)
-                   ON CONFLICT (episode_url) DO UPDATE SET title = excluded.title,
-                     duration_s = coalesce(excluded.duration_s, duration_s)"
-                  url title feed-url duration-s link (db/now)])
-    (state/star! ds url "inbox" (str "one-off from " link))
-    {:url url :title title :duration-s duration-s}))
+  (if-let [known (known-episode ds link)]
+    (star-known! ds known link)
+    (let [{:keys [url title feed-url feed-title duration-s]} (resolve-link link selector)]
+      (if-let [known (known-episode ds url)]
+        (star-known! ds known link)
+        (let [title (or (join-title feed-title title) url)]
+          (db/exec! ds ["INSERT INTO oneoffs (episode_url, title, feed_url, duration_s, source_link, added_ts)
+                         VALUES (?, ?, ?, ?, ?, ?)
+                         ON CONFLICT (episode_url) DO UPDATE SET title = excluded.title,
+                           duration_s = coalesce(excluded.duration_s, duration_s)"
+                        url title feed-url duration-s link (db/now)])
+          (state/star! ds url "inbox" (str "one-off from " link))
+          {:url url :title title :duration-s duration-s :feed "inbox" :subscribed false})))))

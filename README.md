@@ -101,7 +101,7 @@ All endpoints use HTTP Basic auth, except `/health` and the two plugin-repositor
 | `POST /next?player=&max=30m&mode=next` | Queue a pick. `mode`: `next` (default: after the current track, and start playing if idle), `now`, `append`. `max` accepts `30m`, `1h30m`, `45` (minutes) |
 | `POST /skip?player=&max=` | Mark what's playing as skipped (it won't be picked again), then `/next` with `mode=now` |
 | `POST /star?url=` / `DELETE /star?url=` / `POST /star/current?player=` | Star or unstar an episode |
-| `POST /oneoff?url=` (or `text=`, or a JSON body) | Add a one-off episode. Accepts an audio URL, an Apple Podcasts episode link, a Pocket Casts link, or a feed URL with `episode=<guid or title words>`. One-offs are starred automatically |
+| `POST /oneoff?url=` (or `text=`, or a JSON body) | Star a shared episode. Accepts an audio URL, an Apple Podcasts episode link, a Pocket Casts link, or a feed URL with `episode=<guid or title words>`. An episode of a feed you subscribe to is just starred under that feed (`"subscribed": true`). Anything else becomes a starred one-off in the inbox |
 | `GET /feeds?max=` | Debug view of the selector |
 | `/api/2/...` | gpodder: auth, devices, subscriptions, episodes |
 
@@ -123,6 +123,39 @@ rest_command:
 
 ### One-offs from your phone
 
-In AntennaPod, an episode's ⋮ menu → Share → **Share media file address** gives you the audio URL. To send it to podzod, set up the **HTTP Shortcuts** app with a shortcut that accepts shared text and POSTs it to `http://host:8086/oneoff` as form field `text`. The same shortcut works for links shared from Apple Podcasts or Pocket Casts. Spotify-only episodes can't be played.
+The Home Assistant Android app is a share target. Sharing to it fires a `mobile_app.share` event: a lone link arrives as `url`, and anything else arrives as `text`. Forward that to podzod:
+
+```yaml
+rest_command:
+  podzod_oneoff:
+    url: "http://host:8086/oneoff"
+    method: POST
+    username: tom
+    password: !secret podzod
+    content_type: "application/x-www-form-urlencoded"
+    payload: "text={{ shared | urlencode }}"
+
+automation:
+  - alias: "Podcast shared to HA → podzod"
+    trigger:
+      - platform: event
+        event_type: mobile_app.share
+    action:
+      - action: rest_command.podzod_oneoff
+        data:
+          shared: "{{ trigger.event.data.url or trigger.event.data.text }}"
+        response_variable: result
+      - action: notify.mobile_app_your_phone
+        data:
+          message: >-
+            {% if result.status == 200 %}Starred: {{ result.content.title }}
+            {% else %}podzod: {{ result.content.error | default(result.status) }}{% endif %}
+```
+
+HA's own toast only confirms that HA received the share. The notification shows podzod's actual result.
+
+In AntennaPod, use the episode's ⋮ menu → Share → **Share media file address**, which sends the audio URL. "Share episode website" only works if podzod can find an audio link on the page. Links shared from Apple Podcasts and Pocket Casts work too. Spotify-only episodes can't be played.
+
+If you'd rather not go through HA, the **HTTP Shortcuts** app can do the same job: make a shortcut that accepts shared text and POSTs it to `/oneoff` as `text`.
 
 gpodder has no way to sync favourites or the queue, so AntennaPod can't send stars. One partial workaround: if you set `:download-means-star true`, downloading an episode on the phone stars it. Check that AntennaPod actually sends `download` actions before relying on this. Every action is stored raw in `episode_actions.raw`.

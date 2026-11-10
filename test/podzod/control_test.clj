@@ -43,6 +43,7 @@
 
 (def ^:dynamic *base* nil)
 (def ^:dynamic *feeds* nil)
+(def ^:dynamic *db* nil)
 
 (use-fixtures :each
   (fn [t]
@@ -56,7 +57,8 @@
           app (with-redefs [podzod.main/start-refresher (constantly nil)] (main/start cfg))]
       (try
         (binding [*base* (str "http://localhost:" (server/server-port (:server app)))
-                  *feeds* (str "http://localhost:" (server/server-port fh))]
+                  *feeds* (str "http://localhost:" (server/server-port fh))
+                  *db* (:db cfg)]
           (t))
         (finally
           (server/server-stop! (:server app))
@@ -139,6 +141,22 @@
     (testing "inbox menu lists it"
       (let [[_ r] (call :get "/lms/menu?menu=inbox")]
         (is (= 1 (count (:items r))))))))
+
+(deftest sharing-a-subscribed-episode-just-stars-it
+  (let [feed (str *feeds* "/serial")]
+    (call :post "/api/2/subscriptions/tom/phone.json" {:add [feed] :remove []})
+    (Thread/sleep 1000)
+    (let [[s r] (call :post "/oneoff" {:text "Listen to this https://ex/s/2.mp3"})]
+      (is (= 200 s))
+      (is (= {:url "https://ex/s/2.mp3" :title "Serial Story: Chapter 2" :feed feed :subscribed true}
+             (select-keys r [:url :title :feed :subscribed]))))
+    (let [[_ r] (call :get "/feeds")]
+      (is (= [{:url "https://ex/s/2.mp3" :feed-key feed}]
+             (map #(select-keys % [:url :feed-key]) (:starred r)))))
+    (testing "not stored as a one-off"
+      (is (empty? (podzod.db/query (podzod.db/datasource *db*) ["SELECT * FROM oneoffs"]))))
+    (testing "starred out-of-order serial episode is played first"
+      (is (= "https://ex/s/2.mp3" (:url (second (call :post "/next"))))))))
 
 (deftest menus
   (call :post "/api/2/subscriptions/tom/phone.json" {:add [(str *feeds* "/serial")] :remove []})
