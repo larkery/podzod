@@ -1,6 +1,7 @@
 (ns podzod.http
   (:require [clojure.string :as str]
             [compojure.core :refer [GET POST DELETE routes context]]
+            [clojure.tools.logging :as log]
             [compojure.route :as route]
             [podzod.gpodder :as gpodder]
             [podzod.json :as json]
@@ -79,6 +80,22 @@
                         :body (java.io.ByteArrayInputStream. bytes))))
       (handler req))))
 
+(defn wrap-log
+  "Logs every request but /health with its status, so failed auth and unknown
+  paths show up too."
+  [handler]
+  (fn [req]
+    (let [resp (try (handler req)
+                    (catch Throwable e
+                      (log/error e (:request-method req) (:uri req) "failed")
+                      {:status 500 :headers {"Content-Type" "text/plain"} :body "error"}))]
+      (when-not (= "/health" (:uri req))
+        (log/info (str/upper-case (name (:request-method req))) (:uri req) "->" (:status resp)
+                  (cond-> ""
+                    (= 401 (:status resp))
+                    (str (if (get-in req [:headers "authorization"]) "(bad credentials)" "(no credentials)")))))
+      resp)))
+
 (defn handler
   "Builds the ring handler. `extra` is a seq of further route handlers."
   [app & extra]
@@ -89,4 +106,5 @@
       (wrap-auth app)
       wrap-cookies
       wrap-params
-      wrap-raw-body))
+      wrap-raw-body
+      wrap-log))
